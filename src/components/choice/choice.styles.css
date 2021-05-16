@@ -1,0 +1,21 @@
+.choice {
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  margin-left: 30%;
+  margin-right: 30%;
+}
+
+.green {
+  border: 1px solid green;
+}
+
+.red {
+  border: 1px solid red;
+  text-decoration: line-through;
+}
+
+.letter {
+  font-family: 'Times New Roman', Times, serif;
+  margin-right: 10px;
+  font-weight: 600;
+}
