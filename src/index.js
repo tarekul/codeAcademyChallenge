@@ -22,7 +22,7 @@ class App extends React.Component {
     const { currentQuiz } = this.state;
 
     return (
-      <div>
+      <div style={{ textAlign: 'center' }}>
         <Title currentQuiz={quizzes[currentQuiz].title} />
         <Quiz
           quiz={quizzes[currentQuiz].questions}

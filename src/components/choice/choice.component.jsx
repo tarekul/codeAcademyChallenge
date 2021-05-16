@@ -8,14 +8,14 @@ export default function Choice({
   correct,
   incorrect,
 }) {
-  let result;
-  if (!correct && !incorrect) result = 'choice';
-  if (correct) result = 'choice green';
-  if (incorrect) result = 'choice red';
+  let choiceHighlight = 'choice';
+
+  if (correct) choiceHighlight += ' green';
+  if (incorrect) choiceHighlight += ' red';
 
   return (
     <p
-      className={result}
+      className={choiceHighlight}
       onClick={e => (selectedAnswer ? selectedAnswer(choice) : '')}
     >
       <span className="letter">

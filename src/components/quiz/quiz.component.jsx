@@ -9,6 +9,7 @@ export default class Quiz extends React.Component {
     quiz: this.props.quiz,
     currentQuestionNum: 0,
     numQuestions: this.props.quiz.length,
+    numCorrect: 0,
     isCorrect: null,
     choosen: null,
     shuffled: null,
@@ -38,18 +39,18 @@ export default class Quiz extends React.Component {
     if (!this.state.choosen) {
       const { quiz, currentQuestionNum } = this.state;
       if (choosen === quiz[currentQuestionNum].correctAnswer)
-        this.setState({ isCorrect: true, choosen });
+        this.setState({
+          isCorrect: true,
+          choosen,
+          numCorrect: this.state.numCorrect + 1,
+        });
       else {
-        this.setState({ isCorrect: false, choosen }, () =>
-          console.log(this.state),
-        );
+        this.setState({ isCorrect: false, choosen });
       }
     }
   };
 
-  choiceOption = () => {};
-
-  render() {
+  displayTextAndChoices = () => {
     const {
       quiz,
       currentQuestionNum,
@@ -57,11 +58,11 @@ export default class Quiz extends React.Component {
       isCorrect,
       choosen,
     } = this.state;
+
     const currentQuestion = quiz[currentQuestionNum];
 
-    if (!shuffled) return '';
     return (
-      <div>
+      <>
         <h3 className="question">{currentQuestion.text}</h3>
         {shuffled.map((s, i) => {
           let correct = null;
@@ -70,9 +71,8 @@ export default class Quiz extends React.Component {
           else if (isCorrect === false) {
             correct = s === currentQuestion.correctAnswer ? 'green' : null;
             incorrect = s === choosen ? 'red' : null;
-            console.log(correct, incorrect);
           }
-          console.log(correct, incorrect);
+
           return (
             <Choice
               key={i}
@@ -84,6 +84,26 @@ export default class Quiz extends React.Component {
             />
           );
         })}
+      </>
+    );
+  };
+
+  nextQuestion = () => {
+    const {} = this.state;
+    console.log(this.state);
+  };
+
+  render() {
+    const { shuffled, isCorrect, choosen } = this.state;
+
+    if (!shuffled) return '';
+    return (
+      <div>
+        {this.displayTextAndChoices()}
+        <p className="result">
+          {choosen ? (isCorrect ? 'Correct...' : 'Incorrect...') : ''}
+        </p>
+        <NextButton nextQuestion={this.nextQuestion} />
       </div>
     );
   }

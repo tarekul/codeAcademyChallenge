@@ -1,9 +1,10 @@
 import React from 'react';
+import './nextButton.styles.css';
 
-export default function NextButton() {
+export default function NextButton({ nextQuestion }) {
   return (
-    <div>
-      <button>Next</button>
+    <div onClick={e => nextQuestion()}>
+      <button className="next">Next</button>
     </div>
   );
 }

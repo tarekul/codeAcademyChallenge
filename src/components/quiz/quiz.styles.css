@@ -1,4 +1,7 @@
 .question {
-  text-align: center;
   font-weight: normal;
+}
+
+.result {
+  font-style: italic;
 }
