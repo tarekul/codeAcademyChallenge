@@ -1,36 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import quizzes from './data/quizzes';
-
-//components
-import Title from './components/title/title.component.jsx';
-import Quiz from './components/quiz/quiz.component.jsx';
-
 import './styles.css';
 
-class App extends React.Component {
-  state = {
-    complete: false,
-    currentQuiz: 0,
-    totalQuizes: quizzes.length,
-  };
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
-  isComplete = () => this.setState({ complete: true });
+import App from './app';
 
-  render() {
-    const { currentQuiz } = this.state;
-
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <Title currentQuiz={quizzes[currentQuiz].title} />
-        <Quiz
-          quiz={quizzes[currentQuiz].questions}
-          isComplete={this.isComplete}
-        />
-      </div>
-    );
-  }
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root'),
+);

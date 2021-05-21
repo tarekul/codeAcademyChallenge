@@ -2,3 +2,9 @@
   font-family: sans-serif;
   text-align: center;
 }
+
+#bold {
+  font-family: 'Times New Roman', Times, serif;
+  margin-right: 10px;
+  font-weight: 600;
+}

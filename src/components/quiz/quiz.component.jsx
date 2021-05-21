@@ -1,110 +1,88 @@
 import React from 'react';
 import './quiz.styles.css';
 
-import Choice from '../choice/choice.component';
-import NextButton from '../nextButton/nextButton.component';
+import { connect } from 'react-redux';
 
-export default class Quiz extends React.Component {
+import {
+  incrementCurrentQuestionIdx,
+  shuffleAndSetChoices,
+  setTotalQuestions,
+} from '../../redux/quiz/quiz.actions';
+
+import { resetAnswerSelection } from '../../redux/question/question.actions';
+
+//components
+import NextButton from '../nextButton/nextQuestionButton.component';
+import DisplayTextAndChoices from '../displayTextAndChoices/displayTextAndChoices.component';
+import Summary from '../summary/summary.component';
+
+class Quiz extends React.Component {
   state = {
-    quiz: this.props.quiz,
-    currentQuestionNum: 0,
-    numQuestions: this.props.quiz.length,
-    numCorrect: 0,
-    isCorrect: null,
-    choosen: null,
-    shuffled: null,
+    index: 0,
   };
 
   componentDidMount() {
-    const shuffled = this.shuffleChoices();
-    this.setState({ shuffled });
+    this.setTotalQuestionsAndShuffleChoices();
   }
 
-  shuffleChoices = () => {
-    const { quiz, currentQuestionNum } = this.state;
-    const currentQuestion = quiz[currentQuestionNum];
+  componentDidUpdate() {
+    const { currentQuestionIdx } = this.props;
 
-    //QuestionChoices
-    const choices = currentQuestion.incorrectAnswers;
-    choices.push(currentQuestion.correctAnswer);
-
-    //shuffle the questions
-    return choices
-      .map(a => ({ sort: Math.random(), value: a }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(a => a.value);
-  };
-
-  selectedAnswer = choosen => {
-    if (!this.state.choosen) {
-      const { quiz, currentQuestionNum } = this.state;
-      if (choosen === quiz[currentQuestionNum].correctAnswer)
-        this.setState({
-          isCorrect: true,
-          choosen,
-          numCorrect: this.state.numCorrect + 1,
-        });
-      else {
-        this.setState({ isCorrect: false, choosen });
-      }
+    if (this.state.index !== currentQuestionIdx) {
+      this.setState({ index: currentQuestionIdx });
+      this.setTotalQuestionsAndShuffleChoices();
     }
-  };
+  }
 
-  displayTextAndChoices = () => {
+  setTotalQuestionsAndShuffleChoices = () => {
     const {
       quiz,
-      currentQuestionNum,
-      shuffled,
-      isCorrect,
-      choosen,
-    } = this.state;
+      currentQuestionIdx,
+      shuffleAndSetChoices,
+      setTotalQuestions,
+      resetAnswerSelection,
+    } = this.props;
+    const question = quiz[currentQuestionIdx];
+    resetAnswerSelection();
+    setTotalQuestions(quiz.length);
 
-    const currentQuestion = quiz[currentQuestionNum];
-
-    return (
-      <>
-        <h3 className="question">{currentQuestion.text}</h3>
-        {shuffled.map((s, i) => {
-          let correct = null;
-          let incorrect = null;
-          if (isCorrect) correct = s === choosen ? 'green' : null;
-          else if (isCorrect === false) {
-            correct = s === currentQuestion.correctAnswer ? 'green' : null;
-            incorrect = s === choosen ? 'red' : null;
-          }
-
-          return (
-            <Choice
-              key={i}
-              choice={s}
-              index={i}
-              correct={correct}
-              incorrect={incorrect}
-              selectedAnswer={this.selectedAnswer}
-            />
-          );
-        })}
-      </>
-    );
-  };
-
-  nextQuestion = () => {
-    const {} = this.state;
-    console.log(this.state);
+    shuffleAndSetChoices(question.correctAnswer, question.incorrectAnswers);
   };
 
   render() {
-    const { shuffled, isCorrect, choosen } = this.state;
+    const { quiz, showSummary } = this.props;
 
-    if (!shuffled) return '';
-    return (
-      <div>
-        {this.displayTextAndChoices()}
-        <p className="result">
-          {choosen ? (isCorrect ? 'Correct...' : 'Incorrect...') : ''}
-        </p>
-        <NextButton nextQuestion={this.nextQuestion} />
-      </div>
-    );
+    if (!showSummary) {
+      return (
+        <>
+          <DisplayTextAndChoices quiz={quiz} />
+          <NextButton quiz={quiz} />
+        </>
+      );
+    }
+    return <Summary />;
   }
 }
+
+const mapStateToProps = state => ({
+  currentQuestionIdx: state.quiz.currentQuestionIdx,
+  showSummary: state.quiz.showSummary,
+  shuffledChoices: state.quiz.shuffledChoices,
+});
+
+const mapDispatchToProps = dispatch => ({
+  setTotalQuestions: num => {
+    dispatch(setTotalQuestions(num));
+  },
+  incrementCurrentQuestionIdx: () => {
+    dispatch(incrementCurrentQuestionIdx());
+  },
+  shuffleAndSetChoices: (correctAnswer, incorrectAnswers) => {
+    dispatch(shuffleAndSetChoices(correctAnswer, incorrectAnswers));
+  },
+  resetAnswerSelection: () => {
+    dispatch(resetAnswerSelection());
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quiz);
