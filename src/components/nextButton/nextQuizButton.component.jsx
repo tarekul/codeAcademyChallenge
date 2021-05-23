@@ -1,16 +1,7 @@
 import React from 'react';
 import './nextButton.styles.css';
 
-import { connect } from 'react-redux';
-
-import { incrementQuiz } from '../../redux/quizzes/quizzes.actions';
-import { resetState } from '../../redux/quiz/quiz.actions';
-
-function NextQuizButton(props) {
-  const nextQuiz = () => {
-    props.resetState();
-    props.incrementQuiz();
-  };
+function NextQuizButton({ nextQuiz }) {
   return (
     <div onClick={e => nextQuiz()}>
       <button className="next">Next</button>
@@ -18,13 +9,4 @@ function NextQuizButton(props) {
   );
 }
 
-const mapDispatchToProps = dispatch => ({
-  incrementQuiz: () => {
-    dispatch(incrementQuiz());
-  },
-  resetState: () => {
-    dispatch(resetState());
-  },
-});
-
-export default connect(null, mapDispatchToProps)(NextQuizButton);
+export default NextQuizButton;

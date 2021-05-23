@@ -4,7 +4,7 @@ import './choice.styles.css';
 import { setAnswerSelection } from '../../redux/question/question.actions';
 import { connect } from 'react-redux';
 
-function Choice({ choice, index, setAnswerSelection, answer, color }) {
+function Choice({ choice, index, setAnswer, answer, color }) {
   let choiceHighlight = 'choice';
 
   if (color === 'green') choiceHighlight += ' green';
@@ -13,7 +13,7 @@ function Choice({ choice, index, setAnswerSelection, answer, color }) {
   return (
     <p
       className={choiceHighlight}
-      onClick={e => (!answer ? setAnswerSelection(choice) : null)}
+      onClick={e => (!answer ? setAnswer(choice) : null)}
     >
       <span id="bold">{String.fromCharCode(index + 97).toUpperCase()}.</span>
       {choice}
@@ -21,12 +21,4 @@ function Choice({ choice, index, setAnswerSelection, answer, color }) {
   );
 }
 
-const mapStateToProps = state => ({
-  answer: state.question.answer,
-});
-
-const mapDispatchToProps = dispatch => ({
-  setAnswerSelection: a => dispatch(setAnswerSelection(a)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Choice);
+export default Choice;

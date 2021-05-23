@@ -1,0 +1,22 @@
+.row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid grey;
+  margin: 10px;
+}
+
+.col {
+  padding: 10px;
+  font-size: 17px;
+}
+
+.correct {
+  color: green;
+  font-size: 18px;
+}
+
+.incorrect {
+  color: red;
+  font-size: 18px;
+}

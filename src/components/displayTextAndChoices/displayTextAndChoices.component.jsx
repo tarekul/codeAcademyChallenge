@@ -1,18 +1,47 @@
 import React, { Component } from 'react';
 
-import { connect } from 'react-redux';
-
-import { incrementNumberCorrect } from '../../redux/quiz/quiz.actions';
-import { setAnswerSelection } from '../../redux/question/question.actions';
+import { shuffleChoices } from '../../utilities';
 
 import Choice from '../choice/choice.component';
 
 class DisplayTextAndChoices extends Component {
+  state = {
+    shuffledChoices: [],
+    answer: null,
+    isCorrect: null,
+    id: 0,
+  };
+
+  componentDidMount() {
+    this.shuffle();
+  }
+
+  componentDidUpdate() {
+    if (this.state.id !== this.props.currentQuestionIdx) {
+      this.setState({
+        id: this.props.currentQuestionIdx,
+        shuffleChoices: [],
+        answer: null,
+        isCorrect: null,
+      });
+      this.shuffle();
+    }
+  }
+
+  shuffle = () => {
+    const { quiz, currentQuestionIdx } = this.props;
+    const question = quiz[currentQuestionIdx];
+    const choices = [question.correctAnswer, ...question.incorrectAnswers];
+
+    const shuffledChoices = shuffleChoices(choices);
+    this.setState({ shuffledChoices: shuffledChoices });
+  };
+
   selectChoiceColor = s => {
-    const { quiz, currentQuestionIdx, answer } = this.props;
+    const { quiz, currentQuestionIdx } = this.props;
+    const { answer, isCorrect } = this.state;
     if (answer) {
       const question = quiz[currentQuestionIdx];
-      const isCorrect = answer === question.correctAnswer ? true : false;
 
       let color = '';
       if (isCorrect && s === answer) color = 'green';
@@ -26,23 +55,37 @@ class DisplayTextAndChoices extends Component {
   };
 
   showResult = () => {
+    const { isCorrect } = this.state;
+    if (isCorrect === null) return '';
+    else if (isCorrect === true) return 'Correct!';
+    else return 'Incorrect...';
+  };
+
+  setAnswer = ans => {
     const {
       quiz,
       currentQuestionIdx,
-      answer,
-      incrementNumberCorrect,
+      incrementNumCorrect,
+      toggleIsButtonActive,
+      addUserAnswersToList,
     } = this.props;
     const question = quiz[currentQuestionIdx];
-    if (answer === null) return '';
-    if (answer && answer === question.correctAnswer) {
-      incrementNumberCorrect();
-      return 'Correct!';
-    } else if (answer !== question.correctAnswer) return 'Incorrect...';
+
+    addUserAnswersToList(ans);
+    toggleIsButtonActive();
+
+    if (ans === question.correctAnswer) {
+      incrementNumCorrect();
+      this.setState({ isCorrect: true, answer: ans });
+    } else this.setState({ isCorrect: false, answer: ans });
   };
 
   render() {
-    const { quiz, currentQuestionIdx, shuffledChoices } = this.props;
+    const { quiz, currentQuestionIdx } = this.props;
+    const { shuffledChoices, answer } = this.state;
+
     const question = quiz[currentQuestionIdx];
+
     return (
       <div>
         <h3 className="question">{question.text}</h3>
@@ -54,6 +97,7 @@ class DisplayTextAndChoices extends Component {
               choice={s}
               index={i}
               color={color}
+              answer={answer}
               setAnswer={this.setAnswer}
             />
           );
@@ -64,18 +108,4 @@ class DisplayTextAndChoices extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  currentQuestionIdx: state.quiz.currentQuestionIdx,
-  shuffledChoices: state.quiz.shuffledChoices,
-  answer: state.question.answer,
-});
-
-const mapDispatchToProps = dispatch => ({
-  setAnswerSelection: a => dispatch(setAnswerSelection(a)),
-  incrementNumberCorrect: () => dispatch(incrementNumberCorrect()),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(DisplayTextAndChoices);
+export default DisplayTextAndChoices;

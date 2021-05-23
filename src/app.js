@@ -1,46 +1,47 @@
 import React from 'react';
 
-import { connect } from 'react-redux';
-
 import quizzes from './data/quizzes';
-
-import {
-  setTotalNumOfQuizzes,
-  incrementQuiz,
-} from './redux/quizzes/quizzes.actions';
 
 //components
 import Title from './components/title/title.component.jsx';
 import Quiz from './components/quiz/quiz.component.jsx';
+import NextQuizButton from './components/nextButton/nextQuizButton.component';
 
 class App extends React.Component {
-  componentDidMount() {
-    this.props.setTotalNumOfQuiz(quizzes.length);
-  }
+  state = {
+    currentQuizIdx: 0,
+    totalQuizzes: quizzes.length,
+    showNextQuizButton: false,
+  };
+
+  nextQuiz = () => {
+    const { currentQuizIdx, totalQuizzes } = this.state;
+    if (currentQuizIdx < totalQuizzes - 1)
+      this.setState({
+        currentQuizIdx: currentQuizIdx + 1,
+        showNextQuizButton: false,
+      });
+  };
+
+  toggleNextQuizButton = () => {
+    this.setState({ showNextQuizButton: true });
+  };
 
   render() {
-    const { currentQuiz } = this.props;
+    const { currentQuizIdx, showNextQuizButton } = this.state;
 
     return (
       <div style={{ textAlign: 'center' }}>
-        <Title quiz={quizzes[currentQuiz].title} />
-        <Quiz quiz={quizzes[currentQuiz].questions} />
+        <Title quiz={quizzes[currentQuizIdx].title} />
+        <Quiz
+          quiz={quizzes[currentQuizIdx].questions}
+          currentQuizIdx={currentQuizIdx}
+          toggleNextQuizButton={this.toggleNextQuizButton}
+        />
+        {showNextQuizButton ? <NextQuizButton nextQuiz={this.nextQuiz} /> : ''}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  currentQuiz: state.quizzes.currentQuiz,
-});
-
-const mapDispatchToProps = dispatch => ({
-  setTotalNumOfQuiz: num => {
-    dispatch(setTotalNumOfQuizzes(num));
-  },
-  incrementQuiz: num => {
-    dispatch(incrementQuiz(num));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

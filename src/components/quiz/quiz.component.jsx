@@ -1,87 +1,99 @@
 import React from 'react';
 import './quiz.styles.css';
 
-import { connect } from 'react-redux';
-
-import {
-  incrementCurrentQuestionIdx,
-  shuffleAndSetChoices,
-  setTotalQuestions,
-} from '../../redux/quiz/quiz.actions';
-
-import { resetAnswerSelection } from '../../redux/question/question.actions';
-
 //components
 import NextButton from '../nextButton/nextQuestionButton.component';
 import DisplayTextAndChoices from '../displayTextAndChoices/displayTextAndChoices.component';
-import Summary from '../summary/summary.component';
+import SummaryContainer from '../summaryContainer/summaryContainer.component';
 
 class Quiz extends React.Component {
   state = {
     index: 0,
+    currentQuestionIdx: 0,
+    numCorrect: 0,
+    totalQuestions: this.props.quiz.length,
+    showSummary: false,
+    isButtonActive: false,
+    userAnswers: [],
   };
-  componentDidMount() {
-    this.setTotalQuestionsAndShuffleChoices();
-  }
 
   componentDidUpdate() {
-    const { currentQuestionIdx } = this.props;
-
-    if (this.state.index !== currentQuestionIdx) {
-      this.setState({ index: currentQuestionIdx });
-      this.setTotalQuestionsAndShuffleChoices();
+    if (this.state.index !== this.props.currentQuizIdx) {
+      this.setState({
+        index: this.props.currentQuizIdx,
+        currentQuestionIdx: 0,
+        numCorrect: 0,
+        totalQuestions: this.props.quiz.length,
+        showSummary: false,
+        isButtonActive: false,
+        userAnswers: [],
+      });
     }
   }
 
-  setTotalQuestionsAndShuffleChoices = () => {
-    const {
-      quiz,
-      currentQuestionIdx,
-      shuffleAndSetChoices,
-      setTotalQuestions,
-      resetAnswerSelection,
-    } = this.props;
-    const question = quiz[currentQuestionIdx];
-    resetAnswerSelection();
-    setTotalQuestions(quiz.length);
+  addUserAnswersToList = ans => {
+    const { userAnswers } = this.state;
+    userAnswers.push(ans);
+    this.setState({ userAnswers });
+  };
 
-    shuffleAndSetChoices(question.correctAnswer, question.incorrectAnswers);
+  incrementNumCorrect = () => {
+    this.setState({ numCorrect: this.state.numCorrect + 1 });
+  };
+
+  nextQuestion = () => {
+    const { currentQuestionIdx, totalQuestions } = this.state;
+    const { toggleNextQuizButton } = this.props;
+    if (currentQuestionIdx < totalQuestions - 1) {
+      this.setState({ currentQuestionIdx: currentQuestionIdx + 1 });
+      this.toggleIsButtonActive();
+    } else {
+      toggleNextQuizButton();
+      this.setState({ showSummary: true });
+    }
+  };
+
+  toggleIsButtonActive = () => {
+    this.setState({ isButtonActive: !this.state.isButtonActive });
   };
 
   render() {
-    const { quiz, showSummary } = this.props;
+    const { quiz } = this.props;
+    const {
+      currentQuestionIdx,
+      numCorrect,
+      showSummary,
+      isButtonActive,
+      userAnswers,
+    } = this.state;
 
     if (!showSummary) {
       return (
         <>
-          <DisplayTextAndChoices quiz={quiz} />
-          <NextButton quiz={quiz} />
+          <DisplayTextAndChoices
+            quiz={quiz}
+            currentQuestionIdx={currentQuestionIdx}
+            incrementNumCorrect={this.incrementNumCorrect}
+            toggleIsButtonActive={this.toggleIsButtonActive}
+            addUserAnswersToList={this.addUserAnswersToList}
+          />
+          <NextButton
+            isButtonActive={isButtonActive}
+            nextQuestion={this.nextQuestion}
+          />
         </>
       );
+    } else {
+      return (
+        <SummaryContainer
+          numCorrect={numCorrect}
+          totalQuestions={quiz.length}
+          quiz={quiz}
+          userAnswers={userAnswers}
+        />
+      );
     }
-    return <Summary />;
   }
 }
 
-const mapStateToProps = state => ({
-  currentQuestionIdx: state.quiz.currentQuestionIdx,
-  showSummary: state.quiz.showSummary,
-  shuffledChoices: state.quiz.shuffledChoices,
-});
-
-const mapDispatchToProps = dispatch => ({
-  setTotalQuestions: num => {
-    dispatch(setTotalQuestions(num));
-  },
-  incrementCurrentQuestionIdx: () => {
-    dispatch(incrementCurrentQuestionIdx());
-  },
-  shuffleAndSetChoices: (correctAnswer, incorrectAnswers) => {
-    dispatch(shuffleAndSetChoices(correctAnswer, incorrectAnswers));
-  },
-  resetAnswerSelection: () => {
-    dispatch(resetAnswerSelection());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Quiz);
+export default Quiz;

@@ -1,13 +1,9 @@
 import React from 'react';
 import './summary.styles.css';
 
-import { connect } from 'react-redux';
-
 import { getMessage } from '../../data/messages';
 
-import NextQuizButton from '../nextButton/nextQuizButton.component';
-
-function Summary({ numCorrect, totalQuestions }) {
+function Summary({ numCorrect, totalQuestions, quiz, userAnswers }) {
   return (
     <div>
       <p className="summaryText">
@@ -17,15 +13,8 @@ function Summary({ numCorrect, totalQuestions }) {
       </p>
 
       <p className="summaryText">{getMessage()}</p>
-
-      <NextQuizButton />
     </div>
   );
 }
 
-const mapStateToProps = state => ({
-  totalQuestions: state.quiz.totalQuestions,
-  numCorrect: state.quiz.numCorrect,
-});
-
-export default connect(mapStateToProps)(Summary);
+export default Summary;
