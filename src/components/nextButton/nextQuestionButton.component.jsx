@@ -5,19 +5,13 @@ import { connect } from 'react-redux';
 
 import {
   incrementCurrentQuestionIdx,
-  shuffleAndSetChoices,
   toggleShowSummary,
 } from '../../redux/quiz/quiz.actions';
 
-import { resetAnswerSelection } from '../../redux/question/question.actions';
-
 const NextQuestionButton = ({
-  quiz,
   totalQuestions,
   currentQuestionIdx,
   incrementCurrentQuestionIdx,
-  shuffleAndSetChoices,
-  resetAnswerSelection,
   toggleShowSummary,
   answer,
 }) => {
@@ -25,9 +19,6 @@ const NextQuestionButton = ({
     if (answer) {
       if (currentQuestionIdx < totalQuestions - 1) {
         incrementCurrentQuestionIdx();
-        const question = quiz[currentQuestionIdx + 1];
-        shuffleAndSetChoices(question.correctAnswer, question.incorrectAnswers);
-        // resetAnswerSelection();
       } else toggleShowSummary();
     }
   };
@@ -49,14 +40,8 @@ const mapDispatchToProps = dispatch => ({
   incrementCurrentQuestionIdx: () => {
     dispatch(incrementCurrentQuestionIdx());
   },
-  shuffleAndSetChoices: (correctAnswer, incorrectAnswers) => {
-    dispatch(shuffleAndSetChoices(correctAnswer, incorrectAnswers));
-  },
   toggleShowSummary: () => {
     dispatch(toggleShowSummary());
-  },
-  resetAnswerSelection: () => {
-    dispatch(resetAnswerSelection());
   },
 });
 

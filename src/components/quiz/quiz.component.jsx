@@ -20,7 +20,6 @@ class Quiz extends React.Component {
   state = {
     index: 0,
   };
-
   componentDidMount() {
     this.setTotalQuestionsAndShuffleChoices();
   }

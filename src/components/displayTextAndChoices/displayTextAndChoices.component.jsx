@@ -54,6 +54,7 @@ class DisplayTextAndChoices extends Component {
               choice={s}
               index={i}
               color={color}
+              setAnswer={this.setAnswer}
             />
           );
         })}
