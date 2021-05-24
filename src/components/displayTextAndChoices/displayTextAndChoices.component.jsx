@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { shuffleChoices } from '../../utilities';
+import { shuffleChoices, checkAnswer } from '../../utilities';
 
 import Choice from '../choice/choice.component';
 
@@ -74,10 +74,12 @@ class DisplayTextAndChoices extends Component {
     addUserAnswersToList(ans);
     toggleIsButtonActive();
 
-    if (ans === question.correctAnswer) {
-      incrementNumCorrect();
-      this.setState({ isCorrect: true, answer: ans });
-    } else this.setState({ isCorrect: false, answer: ans });
+    const updateIsCorrectAndAnswer = checkAnswer(
+      ans,
+      question.correctAnswer,
+      incrementNumCorrect,
+    );
+    this.setState({ ...updateIsCorrectAndAnswer });
   };
 
   render() {

@@ -3,14 +3,51 @@ import ReactDOM from 'react-dom';
 
 import './styles.css';
 
-import { Provider } from 'react-redux';
-import store from './redux/store';
+import { quizzes } from './data/quizzes';
 
-import App from './app';
+//components
+import Title from './components/title/title.component.jsx';
+import Quiz from './components/quiz/quiz.component.jsx';
+import NextQuizButton from './components/nextButton/nextQuizButton.component';
 
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root'),
-);
+class App extends React.Component {
+  state = {
+    currentQuizIdx: 0,
+    totalQuizzes: quizzes.length,
+    showNextQuizButton: false,
+  };
+
+  nextQuiz = () => {
+    const { currentQuizIdx, totalQuizzes } = this.state;
+    if (currentQuizIdx < totalQuizzes - 1)
+      this.setState({
+        currentQuizIdx: currentQuizIdx + 1,
+        showNextQuizButton: false,
+      });
+    else if (currentQuizIdx === totalQuizzes - 1) {
+      this.setState({ currentQuizIdx: 0, showNextQuizButton: false });
+    }
+  };
+
+  toggleNextQuizButton = () => {
+    this.setState({ showNextQuizButton: true });
+  };
+
+  render() {
+    const { currentQuizIdx, showNextQuizButton } = this.state;
+
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <Title quiz={quizzes[currentQuizIdx].title} />
+        <Quiz
+          quiz={quizzes[currentQuizIdx].questions}
+          currentQuizIdx={currentQuizIdx}
+          toggleNextQuizButton={this.toggleNextQuizButton}
+        />
+        {showNextQuizButton ? <NextQuizButton nextQuiz={this.nextQuiz} /> : ''}
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));

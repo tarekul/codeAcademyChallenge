@@ -22,7 +22,7 @@ export default function TableOfResults({ quiz, userAnswers }) {
       </div>
       {quiz.map((question, i) => {
         return (
-          <div className="row">
+          <div key={i} className="row">
             <div className="col">{question.text}</div>
             <div className="col">Your Answer: {userAnswers[i]}</div>
             <div className="col">

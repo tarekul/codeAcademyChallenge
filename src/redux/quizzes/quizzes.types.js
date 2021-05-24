@@ -1,4 +1,0 @@
-export const quizzesActionTypes = {
-  INCREMENT_QUIZ: 'INCREMENT_QUIZ',
-  SET_TOTAL_NUM_QUIZZES: 'SET_TOTAL_NUM_QUIZZES',
-};

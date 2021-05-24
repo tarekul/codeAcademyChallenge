@@ -4,3 +4,10 @@ export const shuffleChoices = arr => {
     .sort((a, b) => a.sort - b.sort)
     .map(a => a.value);
 };
+
+export const checkAnswer = (answer, correctAnswer, cb) => {
+  if (answer === correctAnswer) {
+    cb();
+    return { isCorrect: true, answer };
+  } else return { isCorrect: false, answer };
+};

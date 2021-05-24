@@ -6,17 +6,42 @@
   margin: 10px;
 }
 
+.incorrect {
+  color: red;
+  font-size: 18px;
+}
+
 .col {
   padding: 10px;
-  font-size: 17px;
 }
 
 .correct {
   color: green;
-  font-size: 18px;
 }
 
-.incorrect {
-  color: red;
-  font-size: 18px;
+@media only screen and (min-width: 320px) and (max-width: 675px) {
+  .col {
+    font-size: 13px;
+  }
+  .correct {
+    font-size: 14px;
+  }
+}
+
+@media only screen and (min-width: 765px) and (max-width: 1024px) {
+  .col {
+    font-size: 15px;
+  }
+  .correct {
+    font-size: 16px;
+  }
+}
+
+@media only screen and (min-width: 800px) and (max-width: 1400px) {
+  .col {
+    font-size: 17px;
+  }
+  .correct {
+    font-size: 18px;
+  }
 }
